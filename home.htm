@@ -1,0 +1,46 @@
+<h1>GBpwd</h1>
+
+<p>Create secure passwords for each of your accounts using one master key. By Gabriel Barreiro and Leopoldo Barreiro.</p>
+
+<p><a href="https://illputaurllater.com/home">Click here</a> to access the GitHub page for full explanation.</p>
+
+<p><b>1. Setup your master key</b></p>
+
+<p>Master Key Type: 
+    <select id="master-key-type">
+        <option id="password" value="password">Password</option>
+        <option id="file-32" value="file-32">File (only first 16 bytes)</option>
+        <option id="file-128" value="file-128">File (only first 64 bytes)</option>
+        <option id="file-128-password" value="file-128-password">File (only first 128 bytes) + password</option>
+    </select>
+</p>
+
+<p>Password: <input type="password" id="master-key-password"></p>
+
+<p>File: <input id="master-key-file" type="file"></p>
+
+<p><b>2. Set the parameters</b></p>
+
+<p>Token: <input id="Token"></p>
+
+<p>Password Suffix: <input id="suffix" value="@A"></p>
+
+<p><b>3. Select your cryptographic algorithm</b></p>
+
+<p>Cryptographic Algorithm: 
+    <select>
+        <option id="argon2">argon2()</option>
+        <option id="scrypt">scrypt()</option>
+        <option id="bcrypt">bcrypt()</option>
+        <option id="all">argon2(scrypt(bcrypt())) (EXTREMELY INSANE)</option>
+    </select>
+</p>
+
+<p><b>4. Your fresh password</b></p>
+
+<input type="text" id="generated-password">
+
+<p>
+    <input type="button" value="Generate">
+    <input type="button" value="Close">
+</p>
