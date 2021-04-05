@@ -3,7 +3,7 @@ import os
 from PySide2.QtWidgets import *
 from PySide2.QtCore import Qt
 
-from . import generator
+from . import backend
 
 class CompleteMainGui(QWidget):
     
@@ -38,6 +38,7 @@ class CompleteMainGui(QWidget):
         self.password_label = QLabel('Password:')
         self.password_edit = QLineEdit()
         self.password_edit.setEchoMode(QLineEdit.Password)
+        self.password_edit.textChanged.connect(self.passwordChanged)
         
         password = QHBoxLayout()
         password.addWidget(self.password_label)
@@ -124,15 +125,29 @@ class CompleteMainGui(QWidget):
         token = self.token_edit.text()
 
         if self.func_combo.currentIndex() == 0:
-            func = generator.ScryptGen(token, password, binary, self.lenght)
+            func = backend.ScryptGen(token, password, binary, self.lenght)
         elif self.func_combo.currentIndex() == 1:
-            func = generator.PBKDF2Gen(token, password, binary, self.lenght)
+            func = backend.PBKDF2Gen(token, password, binary, self.lenght)
 
         self.sucess_gui = SucessGui(func.derive())
         self.sucess_gui.show()
 
     def closeEvent(self, event):
         exit()
+
+    def passwordChanged(self):
+        password = self.password_edit.text()
+
+        entropy = backend.PasswordChecker(password).check()
+
+        if entropy < 24:
+            self.password_edit.setStyleSheet('background-color: #FF9999')
+        elif entropy < 32:
+            self.password_edit.setStyleSheet('background-color: #FFB266')
+        elif entropy < 48:
+            self.password_edit.setStyleSheet('background-color: #FFFF66')
+        elif entropy < 64:
+            self.password_edit.setStyleSheet('background-color: #CCFF99')
 
 class SucessGui(QWidget):
 
