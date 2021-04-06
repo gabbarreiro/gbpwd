@@ -114,6 +114,11 @@ class CompleteMainGui(QWidget):
             self.password_edit.setEnabled(False)
 
     def generateClick(self):
+        if backend.PasswordChecker(self.password_edit.text()).check() <= 32:
+            self.msgbox = MsgBoxGui('Master password is too weak. Try using more unique characters and a longer password.', 'Error')
+            self.msgbox.show()
+            return
+
         if self.master_key_combo.currentIndex() == 0:
             password = self.password_edit.text().encode('utf8')
         else:
@@ -143,13 +148,14 @@ class CompleteMainGui(QWidget):
         entropy = backend.PasswordChecker(password).check()
 
         if entropy <= 24:
-            self.password_edit.setStyleSheet('background-color: #FF9999')
+            self.password_edit.setStyleSheet('background-color: #FF9999')  # Red
         elif entropy <= 32:
-            self.password_edit.setStyleSheet('background-color: #FFB266')
+            self.password_edit.setStyleSheet('background-color: #FFB266')  # Orange
         elif entropy <= 64:
-            self.password_edit.setStyleSheet('background-color: #FFFF66')
+            self.password_edit.setStyleSheet('background-color: #FFFF66')  # Yellow
         else:
-            self.password_edit.setStyleSheet('background-color: #CCFF99')
+            self.password_edit.setStyleSheet('background-color: #CCFF99')  # Green
+
 
 class SucessGui(QWidget):
 
@@ -169,7 +175,7 @@ class SucessGui(QWidget):
 
         self.show_btn = QPushButton('Show')
         self.close_btn = QPushButton('Close')
-        self.show_btn.clicked.connect(self.show_btn_clicked)
+        self.show_btn.clicked.connect(self.showClicked)
         self.close_btn.clicked.connect(self.close)
 
         btns_layout = QHBoxLayout()
@@ -184,10 +190,29 @@ class SucessGui(QWidget):
 
         self.setWindowFlag(Qt.WindowStaysOnTopHint)
 
-    def show_btn_clicked(self):
+    def showClicked(self):
         if self.show_btn.text() == 'Show':
             self.show_btn.setText('Hide')
             self.pwd_edit.setEchoMode(QLineEdit.Normal)
         else:
             self.show_btn.setText('Show')
             self.pwd_edit.setEchoMode(QLineEdit.NoEcho)
+
+
+class MsgBoxGui(QWidget):
+    def __init__(self, text, title):
+        super().__init__()
+        
+        main_layout = QVBoxLayout()
+
+        self.text_label = QLabel(text)
+        self.close_button = QPushButton('Close')
+        self.close_button.clicked.connect(self.close)
+
+        main_layout.addWidget(self.text_label)
+        main_layout.addWidget(self.close_button)
+
+        self.setWindowTitle(title)
+        self.setLayout(main_layout)
+
+        self.resize(100, 100)
