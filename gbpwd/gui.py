@@ -16,7 +16,7 @@ class CompleteMainGui(QWidget):
 
         self.master_key_label = QLabel('Master key type:')
         self.master_key_combo = QComboBox()
-        self.master_key_combo.insertItems(0, ('Password', 'File (first 256 bits)'))
+        self.master_key_combo.insertItems(0, ('Password', 'File (first 32 bytes)'))
         self.master_key_combo.currentIndexChanged.connect(self.comboboxChange)
 
         master_key = QHBoxLayout()
@@ -27,7 +27,7 @@ class CompleteMainGui(QWidget):
         self.file_name_label = QLabel('no file selected')
         self.file_name_label.setAlignment(Qt.AlignRight|Qt.AlignBottom)
         self.file_button = QPushButton('Select')
-        self.file_button.clicked.connect(self.file_btn)
+        self.file_button.clicked.connect(self.selectFile)
         self.file_button.setEnabled(False)
 
         file = QHBoxLayout()
@@ -39,6 +39,7 @@ class CompleteMainGui(QWidget):
         self.password_edit = QLineEdit()
         self.password_edit.setEchoMode(QLineEdit.Password)
         self.password_edit.textChanged.connect(self.passwordChanged)
+        self.password_edit.setFixedWidth(200)
         
         password = QHBoxLayout()
         password.addWidget(self.password_label)
@@ -46,6 +47,7 @@ class CompleteMainGui(QWidget):
 
         self.token_label = QLabel('Token:')
         self.token_edit = QLineEdit()
+        self.token_edit.setFixedWidth(200)
 
         token = QHBoxLayout()
         token.addWidget(self.token_label)
@@ -90,7 +92,7 @@ class CompleteMainGui(QWidget):
 
         self.setFixedSize(width, height)
     
-    def file_btn(self):
+    def selectFile(self):
         self.file_gui = QFileDialog()
 
         file_path, _ = self.file_gui.getOpenFileName(self, options=QFileDialog.DontUseNativeDialog)
@@ -118,7 +120,7 @@ class CompleteMainGui(QWidget):
             password = b''
 
         if self.master_key_combo.currentIndex() == 1:
-            binary = self.file.read(16)
+            binary = self.file.read(32)
         else:
             binary = b''
 
@@ -140,13 +142,13 @@ class CompleteMainGui(QWidget):
 
         entropy = backend.PasswordChecker(password).check()
 
-        if entropy < 24:
+        if entropy <= 24:
             self.password_edit.setStyleSheet('background-color: #FF9999')
-        elif entropy < 32:
+        elif entropy <= 32:
             self.password_edit.setStyleSheet('background-color: #FFB266')
-        elif entropy < 48:
+        elif entropy <= 64:
             self.password_edit.setStyleSheet('background-color: #FFFF66')
-        elif entropy < 64:
+        else:
             self.password_edit.setStyleSheet('background-color: #CCFF99')
 
 class SucessGui(QWidget):
