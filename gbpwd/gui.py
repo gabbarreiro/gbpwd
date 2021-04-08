@@ -5,8 +5,9 @@ from PySide2.QtCore import Qt
 
 from . import backend
 
+
 class CompleteMainGui(QWidget):
-    
+
     file = None
     binary = b''
     lenght = 20
@@ -16,7 +17,8 @@ class CompleteMainGui(QWidget):
 
         self.master_key_label = QLabel('Master key type:')
         self.master_key_combo = QComboBox()
-        self.master_key_combo.insertItems(0, ('Password', 'File (first 32 bytes)'))
+        self.master_key_combo.insertItems(
+            0, ('Password', 'File (first 32 bytes)'))
         self.master_key_combo.currentIndexChanged.connect(self.comboboxChange)
 
         master_key = QHBoxLayout()
@@ -25,7 +27,7 @@ class CompleteMainGui(QWidget):
 
         self.file_label = QLabel('Select your file:')
         self.file_name_label = QLabel('no file selected')
-        self.file_name_label.setAlignment(Qt.AlignRight|Qt.AlignBottom)
+        self.file_name_label.setAlignment(Qt.AlignRight | Qt.AlignBottom)
         self.file_button = QPushButton('Select')
         self.file_button.clicked.connect(self.selectFile)
         self.file_button.setEnabled(False)
@@ -40,7 +42,7 @@ class CompleteMainGui(QWidget):
         self.password_edit.setEchoMode(QLineEdit.Password)
         self.password_edit.textChanged.connect(self.passwordChanged)
         self.password_edit.setFixedWidth(200)
-        
+
         password = QHBoxLayout()
         password.addWidget(self.password_label)
         password.addWidget(self.password_edit, stretch=1)
@@ -91,11 +93,12 @@ class CompleteMainGui(QWidget):
         self.setWindowTitle('GBpwd')
 
         self.setFixedSize(width, height)
-    
+
     def selectFile(self):
         self.file_gui = QFileDialog()
 
-        file_path, _ = self.file_gui.getOpenFileName(self, options=QFileDialog.DontUseNativeDialog)
+        file_path, _ = self.file_gui.getOpenFileName(
+            self, options=QFileDialog.DontUseNativeDialog)
 
         if file_path:
             self.file_name_label.setText(os.path.basename(file_path))
@@ -115,7 +118,8 @@ class CompleteMainGui(QWidget):
 
     def generateClick(self):
         if backend.PasswordChecker(self.password_edit.text()).check() <= 32:
-            self.msgbox = MsgBoxGui('Master password is too weak. Try using more unique characters and a longer password.', 'Error')
+            self.msgbox = MsgBoxGui(
+                'Master password is too weak. Try using more unique characters and a longer password.', 'Error')
             self.msgbox.show()
             return
 
@@ -148,29 +152,33 @@ class CompleteMainGui(QWidget):
         entropy = backend.PasswordChecker(password).check()
 
         if entropy <= 24:
-            self.password_edit.setStyleSheet('background-color: #FF9999')  # Red
+            self.password_edit.setStyleSheet(
+                'background-color: #FF9999')  # Red
         elif entropy <= 32:
-            self.password_edit.setStyleSheet('background-color: #FFB266')  # Orange
+            self.password_edit.setStyleSheet(
+                'background-color: #FFB266')  # Orange
         elif entropy <= 64:
-            self.password_edit.setStyleSheet('background-color: #FFFF66')  # Yellow
+            self.password_edit.setStyleSheet(
+                'background-color: #FFFF66')  # Yellow
         else:
-            self.password_edit.setStyleSheet('background-color: #CCFF99')  # Green
+            self.password_edit.setStyleSheet(
+                'background-color: #CCFF99')  # Green
 
 
 class SucessGui(QWidget):
 
     def __init__(self, pwd='', width=150, height=150):
         super().__init__()
-        
+
         main_layout = QVBoxLayout()
 
         self.label = QLabel('You password has been generated!')
-        
+
         main_layout.addWidget(self.label)
 
         self.pwd_edit = QLineEdit(pwd, readOnly=True)
         self.pwd_edit.setEchoMode(QLineEdit.NoEcho)
-        
+
         main_layout.addWidget(self.pwd_edit)
 
         self.show_btn = QPushButton('Show')
@@ -202,7 +210,7 @@ class SucessGui(QWidget):
 class MsgBoxGui(QWidget):
     def __init__(self, text, title):
         super().__init__()
-        
+
         main_layout = QVBoxLayout()
 
         self.text_label = QLabel(text)

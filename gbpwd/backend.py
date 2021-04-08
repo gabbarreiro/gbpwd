@@ -16,7 +16,7 @@ class Generator:
 
     def password_encode(self):
         data = bytes(self.password) + self.binary
-        
+
         data = SHA256.new(base64.b64encode(data)).digest()
 
         return data
@@ -34,6 +34,7 @@ class ScryptGen(Generator):
 
         return base64.b64encode(data).decode()
 
+
 class PBKDF2Gen(Generator):
 
     def _derive(self, mkey, token):
@@ -48,14 +49,14 @@ class PasswordChecker:
 
     def __init__(self, password):
         self.password = password
-    
+
     def check(self):
         return math.log(self._unique_char()**len(self.password), 2)
-    
+
     def _unique_char(self):
         chars = set()
 
         for c in self.password:
             chars.add(c)
-        
+
         return len(chars)
